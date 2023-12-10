@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `loan` MODIFY `userId` INTEGER NOT NULL DEFAULT 1;

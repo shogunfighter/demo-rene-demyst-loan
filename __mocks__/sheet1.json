@@ -1,0 +1,14 @@
+[
+    { "year": 2020, "month": 12, "profitOrLoss": 100, "assetsValue": 100 },
+    { "year": 2020, "month": 11, "profitOrLoss": 200, "assetsValue": 200 },
+    { "year": 2020, "month": 10, "profitOrLoss": 300, "assetsValue": 300 },
+    { "year": 2020, "month": 9, "profitOrLoss": 400, "assetsValue": 400 },
+    { "year": 2020, "month": 8, "profitOrLoss": 500, "assetsValue": 500 },
+    { "year": 2020, "month": 7, "profitOrLoss": 600, "assetsValue": 600 },
+    { "year": 2020, "month": 6, "profitOrLoss": 700, "assetsValue": 700 },
+    { "year": 2020, "month": 5, "profitOrLoss": 800, "assetsValue": 800 },
+    { "year": 2020, "month": 4, "profitOrLoss": 900, "assetsValue": 900 },
+    { "year": 2020, "month": 3, "profitOrLoss": 1000, "assetsValue": 1000 },
+    { "year": 2020, "month": 2, "profitOrLoss": 1100, "assetsValue": 1100 },
+    { "year": 2020, "month": 1, "profitOrLoss": 1200, "assetsValue": 1200 }
+]

@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String
+  loans loan[]
+}
+
+model loan {
+  id                Int             @id @default(autoincrement())
+  status            Int             @default(0)
+  description       String
+  amount            Float           @default(0)
+  preAssessment     Float           @default(20)
+  userId            Int             @default(1)
+  user              user            @relation(fields: [userId], references: [id])
+  accountProviderId Int             @default(-1)
+  accountProvider   accountProvider @relation(fields: [accountProviderId], references: [id])
+  businessDetailId  Int             @default(-1)
+  businessDetail    businessDetail  @relation(fields: [businessDetailId], references: [id])
+}
+
+model accountProvider {
+  id    Int    @id @default(autoincrement())
+  name  String
+  loans loan[]
+}
+
+model businessDetail {
+  id      Int    @id @default(autoincrement())
+  name    String
+  year    Int
+  summary Float  @default(0)
+  loans   loan[]
+}

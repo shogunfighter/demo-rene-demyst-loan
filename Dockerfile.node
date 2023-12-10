@@ -1,0 +1,108 @@
+FROM node:18-alpine AS build
+# Install dependencies only when needed
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+# Copy and install the dependencies for the project
+COPY package.json package-lock.json ./
+RUN npm ci
+# Copy all other project files to working directory
+COPY . .
+COPY .env .env
+
+RUN npx prisma generate
+RUN npx prisma migrate deploy
+
+# Run the next build process and generate the artifacts
+RUN npm run build
+
+# we are using multi stage build process to keep the image size as small as possible
+FROM node:18-alpine
+# update and install latest dependencies, add dumb-init package
+# add a non root user
+RUN apk update && apk upgrade && apk add dumb-init && adduser -D nextuser 
+
+# set work dir as app
+WORKDIR /app
+# copy the public folder from the project as this is not included in the build process
+COPY --from=build --chown=nextuser:nextuser /app/public ./public
+# copy the standalone folder inside the .next folder generated from the build process 
+COPY --from=build --chown=nextuser:nextuser /app/.next/standalone ./
+# copy the static folder inside the .next folder generated from the build process 
+COPY --from=build --chown=nextuser:nextuser /app/.next/static ./.next/static
+# set non root user
+USER nextuser
+
+# expose 3000 on container
+EXPOSE 3000
+
+# set app host ,port and node env 
+ENV HOST=0.0.0.0 PORT=3000 NODE_ENV=production
+# start the app with dumb init to spawn the Node.js runtime process
+# with signal support
+CMD ["dumb-init","node","server.js"]
+
+
+# FROM node:18-alpine AS base
+
+# # 1. Install dependencies only when needed
+# FROM base AS deps
+# # Install dependencies only when needed
+# RUN apk add --no-cache libc6-compat
+
+# # update and install latest dependencies, add dumb-init package
+# # add a non root user
+# RUN apk update && apk upgrade && apk add dumb-init
+
+# WORKDIR /app
+
+# # Install dependencies based on the preferred package manager
+# COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+# RUN \
+#   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+#   elif [ -f package-lock.json ]; then npm ci; \
+#   elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
+#   else echo "Lockfile not found." && exit 1; \
+#   fi
+
+# # 2. Rebuild the source code only when needed
+# FROM base AS builder
+# WORKDIR /app
+# COPY --from=deps /app/node_modules ./node_modules
+# COPY . .
+# # This will do the trick, use the corresponding env file for each environment.
+
+# # COPY .env.development.sample .env.production
+# COPY .env .env
+
+# RUN npx prisma generate
+# RUN npx prisma migrate deploy
+
+# RUN npm run build
+
+# # 3. Production image, copy all the files and run next
+# FROM base AS runner
+# WORKDIR /app
+
+# RUN addgroup -g 1001 -S nodejs
+# RUN adduser -S nextjs -u 1001
+
+# # Automatically leverage output traces to reduce image size
+# # https://nextjs.org/docs/advanced-features/output-file-tracing
+# COPY --from=builder /app/public ./public
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+
+# # Set the correct permission for prerender cache
+# # RUN mkdir .next
+# RUN chown nextjs:nodejs .next
+
+# USER nextjs
+
+# EXPOSE 3000
+# ENV HOST=0.0.0.0 PORT=3000 NODE_ENV=production
+# ENV PORT 3000
+# ENV HOSTNAME localhost
+
+# CMD ["node", "server.js"]

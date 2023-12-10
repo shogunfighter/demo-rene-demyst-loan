@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+
+  mysql:
+    image: demyst-mysql-db
+    build:
+      context: .
+      dockerfile: Dockerfile.mysql
+    ports:
+      - "3306:3306"
+    command: --bind-address=0.0.0.0
+
+  node:
+    image: demyst-nextjs-app
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy

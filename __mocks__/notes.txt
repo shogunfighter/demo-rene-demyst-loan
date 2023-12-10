@@ -1,0 +1,52 @@
+Summary: 
+
+-------------------sheet 1------------------
+assetTotal: 7800
+assetAverage: 650
+profitTotal: 7800
+profitAverage: 650
+profitted: true
+
+====== TEST ======
+loanAmount: 600
+assetAverageGreaterThanLoan: true
+preAssessment: 100
+
+====== TEST ======
+loanAmount: 800
+assetAverageGreaterThanLoan: false
+preAssessment: 60
+
+-------------------sheet 2------------------
+assetTotal: 7800
+assetAverage: 650
+profitTotal: -1200
+profitAverage: -100
+profitted: false
+
+====== TEST ======
+loanAmount: 5000
+assetAverageGreaterThanLoan: false
+preAssessment: 20
+
+====== TEST ======
+loanAmount: 500
+assetAverageGreaterThanLoan: true
+preAssessment: 100
+
+-------------------sheet 3------------------
+assetTotal: 758460
+assetAverage: 63205
+profitTotal: 199950
+profitAverage: 16662
+profitted: true
+
+====== TEST ======
+loanAmount: 6000
+assetAverageGreaterThanLoan: true
+preAssessment: 100
+
+====== TEST ======
+loanAmount: 90000
+assetAverageGreaterThanLoan: false
+preAssessment: 60
